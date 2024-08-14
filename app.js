@@ -37,13 +37,6 @@ app.get('/animal-details/:animalId', (req, res) => {
 });
 
 app.get('/add-to-cart/:animalId', (req, res) => {
-  // TODO: Finish add to cart functionality
-  // The logic here should be something like:
-  // - check if a "cart" exists in the session, and create one (an empty
-  // object keyed to the string "cart") if not
-  // - check if the desired animal id is in the cart, and if not, put it in
-  // - increment the count for that animal id by 1
-  // - redirect the user to the cart page
   const animalId = req.params.animalId;
   
   if (!req.session.cart) {
@@ -61,23 +54,6 @@ app.get('/add-to-cart/:animalId', (req, res) => {
 });
 
 app.get('/cart', (req, res) => {
-  // TODO: Display the contents of the shopping cart.
-
-  // The logic here will be something like:
-
-  // - get the cart object from the session
-  // - create an array to hold the animals in the cart, and a variable to hold the total
-  // cost of the order
-  // - loop over the cart object, and for each animal id:
-  //   - get the animal object by calling getAnimalDetails
-  //   - compute the total cost for that type of animal
-  //   - add this to the order total
-  //   - add quantity and total cost as properties on the animal object
-  //   - add the animal object to the array created above
-  // - pass the total order cost and the array of animal objects to the template
-
-  // Make sure your function can also handle the case where no cart has
-  // been added to the session
   if (!req.session.cart) {
     req.session.cart = {};
   }
@@ -130,14 +106,34 @@ app.get('/checkout', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  // TODO: Implement this
-  res.send('Login has not been implemented yet!');
+  res.render('login.html');
 });
 
 app.post('/process-login', (req, res) => {
-  // TODO: Implement this
-  res.send('Login has not been implemented yet!');
+  const { username, password } = req.body;
+  
+  // Iterate through users to see if username and password match an existing user
+  for (const user of users) {
+    if (username === user.username && password === user.password) {
+      // If username and password an existing user:
+      // save username to session, got to '/all-animals' route
+      // and don't do anything else
+      req.session.username = username;
+      res.redirect('/all-animals');
+      return;
+    }
+  }
+  // If user imput doesn't match any exiting users:
+  // go back to login page an display message
+  res.render('login.html', {
+    message: `Incorrect username or password`
+  });  
 });
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/login')
+})
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}...`);
