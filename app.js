@@ -2,8 +2,9 @@ import express from 'express';
 import nunjucks from 'nunjucks';
 import morgan from 'morgan';
 import session from 'express-session';
-import users from './users.json' assert { type: 'json' };
-import stuffedAnimalData from './stuffed-animal-data.json' assert { type: 'json' };
+// Changed 'assert' to 'with' (following two lines)
+import users from './users.json' with { type: 'json' };
+import stuffedAnimalData from './stuffed-animal-data.json' with { type: 'json' };
 
 const app = express();
 const port = '8000';
