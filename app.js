@@ -44,6 +44,21 @@ app.get('/add-to-cart/:animalId', (req, res) => {
   // - check if the desired animal id is in the cart, and if not, put it in
   // - increment the count for that animal id by 1
   // - redirect the user to the cart page
+  const animalId = req.params.animalId;
+
+  
+  if (!req.session.cart) {
+    req.session.cart = {};
+  }
+
+  if (!(animalId in req.session.cart)) {
+    req.session.cart[animalId] = 0;
+  }
+  req.session.cart[animalId] += 1;
+
+  console.log(req.session)
+
+  res.redirect("/cart")
 });
 
 app.get('/cart', (req, res) => {
