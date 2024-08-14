@@ -28,12 +28,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/all-animals', (req, res) => {
-  res.render('all-animals.html.njk', { animals: Object.values(stuffedAnimalData) });
+  res.render('all-animals.html', { animals: Object.values(stuffedAnimalData) });
 });
 
 app.get('/animal-details/:animalId', (req, res) => {
   const animalDetails = getAnimalDetails(req.params.animalId);
-  res.render('animal-details.html.njk', { animal: animalDetails });
+  res.render('animal-details.html', { animal: animalDetails });
 });
 
 app.get('/add-to-cart/:animalId', (req, res) => {
@@ -117,7 +117,7 @@ app.get('/cart', (req, res) => {
     animals.push(animalDetails)
   }
 
-  res.render('cart.html.njk', {
+  res.render('cart.html', {
     animals: animals,
     orderTotal: orderTotal
   });
