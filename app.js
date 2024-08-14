@@ -45,7 +45,6 @@ app.get('/add-to-cart/:animalId', (req, res) => {
   // - increment the count for that animal id by 1
   // - redirect the user to the cart page
   const animalId = req.params.animalId;
-
   
   if (!req.session.cart) {
     req.session.cart = {};
@@ -56,7 +55,7 @@ app.get('/add-to-cart/:animalId', (req, res) => {
   }
   req.session.cart[animalId] += 1;
 
-  console.log(req.session)
+  // console.log(req.session)
 
   res.redirect("/cart")
 });
@@ -79,8 +78,49 @@ app.get('/cart', (req, res) => {
 
   // Make sure your function can also handle the case where no cart has
   // been added to the session
+  if (!req.session.cart) {
+    req.session.cart = {};
+  }
 
-  res.render('cart.html.njk');
+  // Save session.cart data to cart
+  const cart = req.session.cart;
+  // console.log(cart);
+
+  // Initialize an array to save animal data to
+  const animals = [];
+
+  // Initialize an order total variable
+  let orderTotal = 0;
+
+  // For every animal in cart
+  for (const animal in cart) {
+    // Get animal details and save to animalDetails object
+    const animalDetails = getAnimalDetails(animal);
+    
+    // Save qty of animal in session cart
+    const qty = cart[animal];
+    
+    // Add qty value to a new key 'qty' in animalDetails object
+    animalDetails.qty = qty;
+    // console.log(`Animal details:`, animalDetails);
+
+    // Calculate subtotal 
+    const subtotal = qty * animalDetails.price;
+
+    // Add subtotal value to new key 'subtotal' in animalDetails object
+    animalDetails.subtotal = subtotal;
+
+    // Calculate order total
+    orderTotal += subtotal;
+
+    // Push animalDetails object to animals array
+    animals.push(animalDetails)
+  }
+
+  res.render('cart.html.njk', {
+    animals: animals,
+    orderTotal: orderTotal
+  });
 });
 
 app.get('/checkout', (req, res) => {
